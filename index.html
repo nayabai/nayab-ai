@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nayab AI — آپ کا ذاتی معاون</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c8a84b;
+  --gold-light: #e2c97e;
+  --gold-faint: rgba(200,168,75,0.08);
+  --dark:  #0b0f16;
+  --dark2: #111720;
+  --dark3: #182030;
+  --dark4: #1f2d3f;
+  --border: rgba(200,168,75,0.15);
+  --text:   #ede3cc;
+  --muted:  #7a8fa8;
+  --green:  #3a8c62;
+  --green2: #52c48a;
+  --blue:   #1e4d8c;
+  --r: 12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:'Poppins',sans-serif;
+  background:var(--dark);
+  color:var(--text);
+  display:flex;flex-direction:column;
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 40% at 50% 0%,rgba(200,168,75,0.07) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 30% at 100% 100%,rgba(30,77,140,0.06) 0%,transparent 60%);
+}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:relative;z-index:10;
+  display:flex;align-items:center;gap:12px;
+  padding:10px 18px;
+  background:rgba(11,15,22,0.97);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+  flex-shrink:0;
+}
+.logo{
+  width:40px;height:40px;border-radius:50%;
+  border:1.5px solid var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+  box-shadow:0 0 14px rgba(200,168,75,0.18);
+  animation:pulse 3s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 14px rgba(200,168,75,0.18);}50%{box-shadow:0 0 22px rgba(200,168,75,0.32);}}
+.topbar-info h1{font-family:'Amiri',serif;font-size:19px;color:var(--gold);letter-spacing:.4px;}
+.topbar-info p{font-size:10px;color:var(--muted);}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green2);margin-left:auto;flex-shrink:0;box-shadow:0 0 6px var(--green2);}
+.tabs{display:flex;gap:4px;margin-left:12px;}
+.tab{background:none;border:1px solid var(--border);color:var(--muted);
+  font-family:'Poppins',sans-serif;font-size:11px;padding:5px 13px;
+  border-radius:20px;cursor:pointer;transition:all .2s;}
+.tab.on,.tab:hover{background:var(--gold-faint);color:var(--gold);border-color:rgba(200,168,75,0.4);}
+
+/* ── LAYOUT ── */
+.body{flex:1;display:flex;overflow:hidden;position:relative;z-index:1;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:230px;flex-shrink:0;
+  background:rgba(17,23,32,0.95);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  padding:14px 10px;gap:12px;
+  overflow-y:auto;
+}
+.sidebar::-webkit-scrollbar{width:3px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.sec-label{font-size:9px;letter-spacing:1.8px;color:var(--gold);text-transform:uppercase;padding:0 6px 5px;opacity:.7;}
+.card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:10px;padding:9px 11px;cursor:pointer;transition:all .2s;font-size:12px;}
+.card:hover{background:var(--gold-faint);border-color:var(--border);}
+.card .ct{color:var(--text);font-weight:600;font-size:12px;margin-bottom:2px;}
+.card .cs{color:var(--muted);font-size:10px;}
+.pbar{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;margin-top:6px;}
+.pfill{height:100%;background:var(--green2);border-radius:2px;transition:width .5s;}
+.addbtn{width:100%;background:none;border:1px dashed rgba(200,168,75,0.22);
+  color:rgba(200,168,75,.5);font-family:'Poppins',sans-serif;font-size:11px;
+  padding:7px;border-radius:8px;cursor:pointer;transition:all .2s;}
+.addbtn:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-faint);}
+
+/* ── CHAT ── */
+.chat{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+.ayah-bar{
+  padding:9px 18px;
+  background:linear-gradient(90deg,rgba(200,168,75,0.07),rgba(58,140,98,0.06));
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.ayah-text{font-family:'Amiri',serif;font-size:13px;color:var(--gold-light);font-style:italic;flex:1;line-height:1.5;}
+.ayah-ref{font-size:10px;color:var(--muted);white-space:nowrap;}
+
+.msgs{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth;}
+.msgs::-webkit-scrollbar{width:4px;}
+.msgs::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+
+.msg{display:flex;gap:9px;animation:fadeup .3s ease;}
+@keyframes fadeup{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
+.msg.u{flex-direction:row-reverse;}
+.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.msg.a .av{background:linear-gradient(135deg,rgba(200,168,75,.18),rgba(58,140,98,.22));border:1px solid rgba(200,168,75,.28);}
+.msg.u .av{background:var(--blue);border:1px solid rgba(255,255,255,.09);}
+.bub{max-width:72%;padding:11px 15px;border-radius:var(--r);font-size:13.5px;line-height:1.7;}
+.msg.a .bub{background:rgba(24,32,48,.95);border:1px solid rgba(200,168,75,.11);border-bottom-left-radius:3px;color:var(--text);}
+.msg.u .bub{background:var(--blue);border:1px solid rgba(255,255,255,.09);border-bottom-right-radius:3px;color:#cfe0ff;}
+.ar{font-family:'Amiri',serif;font-size:16px;color:var(--gold-light);direction:rtl;text-align:right;display:block;margin-bottom:6px;line-height:1.9;}
+.hl{color:var(--gold-light);font-weight:600;}
+.bub ul{padding-left:17px;margin-top:5px;}
+.bub li{margin-bottom:3px;}
+.bub a{color:var(--gold-light);text-decoration:underline;}
+
+/* typing */
+.typing-wrap{display:none;align-items:center;gap:9px;padding:0 20px 4px;}
+.typing-wrap.show{display:flex;}
+.tdots{display:flex;gap:4px;padding:10px 14px;background:rgba(24,32,48,.95);border:1px solid rgba(200,168,75,.11);border-radius:12px;border-bottom-left-radius:3px;}
+.tdots span{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:dot 1.2s infinite;}
+.tdots span:nth-child(2){animation-delay:.2s;}
+.tdots span:nth-child(3){animation-delay:.4s;}
+@keyframes dot{0%,60%,100%{transform:translateY(0);opacity:.35;}30%{transform:translateY(-5px);opacity:1;}}
+
+/* input */
+.inp-area{padding:12px 18px;border-top:1px solid var(--border);background:rgba(11,15,22,.97);backdrop-filter:blur(12px);flex-shrink:0;}
+.qbtns{display:flex;gap:5px;margin-bottom:9px;flex-wrap:wrap;}
+.qbtn{background:var(--gold-faint);border:1px solid rgba(200,168,75,.2);color:rgba(200,168,75,.75);
+  font-family:'Poppins',sans-serif;font-size:10px;padding:4px 10px;border-radius:14px;cursor:pointer;transition:all .2s;}
+.qbtn:hover{background:rgba(200,168,75,.14);color:var(--gold);border-color:var(--gold);}
+.inp-row{display:flex;gap:9px;align-items:flex-end;}
+.txa{flex:1;background:rgba(24,32,48,.9);border:1px solid rgba(200,168,75,.2);border-radius:11px;
+  padding:10px 14px;color:var(--text);font-family:'Poppins',sans-serif;font-size:13px;
+  resize:none;min-height:44px;max-height:110px;outline:none;transition:border-color .2s;}
+.txa:focus{border-color:rgba(200,168,75,.45);}
+.txa::placeholder{color:var(--muted);}
+.sbtn{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,#8a6e2a,var(--gold));
+  border:none;color:var(--dark);font-size:17px;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sbtn:hover{transform:scale(1.06);box-shadow:0 4px 16px rgba(200,168,75,.28);}
+
+/* modals */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;}
+.ov.open{display:flex;}
+.modal{background:var(--dark2);border:1px solid rgba(200,168,75,.22);border-radius:16px;padding:22px;width:330px;}
+.modal h3{color:var(--gold);font-family:'Amiri',serif;font-size:17px;margin-bottom:12px;}
+.modal input,.modal textarea,.modal select{
+  width:100%;background:rgba(24,32,48,.9);border:1px solid rgba(200,168,75,.18);border-radius:8px;
+  padding:9px 12px;color:var(--text);font-family:'Poppins',sans-serif;font-size:12px;
+  outline:none;margin-bottom:9px;}
+.modal textarea{resize:vertical;min-height:75px;}
+.modal select option{background:var(--dark2);}
+.mbtns{display:flex;gap:7px;justify-content:flex-end;margin-top:3px;}
+.mbtns button{padding:7px 16px;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;}
+.bc{background:none;border:1px solid rgba(255,255,255,.1);color:var(--muted);}
+.bs{background:var(--gold);border:none;color:var(--dark);font-weight:600;}
+.bs:hover{background:var(--gold-light);}
+
+/* api key notice */
+.api-notice{background:rgba(200,168,75,.07);border:1px solid rgba(200,168,75,.2);border-radius:10px;
+  padding:10px 14px;font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.6;}
+.api-notice a{color:var(--gold);text-decoration:none;}
+.api-notice input{margin-top:6px;width:100%;background:rgba(24,32,48,.9);border:1px solid rgba(200,168,75,.2);
+  border-radius:6px;padding:6px 10px;color:var(--text);font-size:11px;outline:none;font-family:'Poppins',sans-serif;}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">🌙</div>
+  <div class="topbar-info">
+    <h1>Nayab AI — نایاب</h1>
+    <p>Islamic · Study · Diary · Knowledge</p>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="setTab(this,'chat')">💬 Chat</button>
+    <button class="tab" onclick="setTab(this,'goals')">🎯 Goals</button>
+    <button class="tab" onclick="setTab(this,'diary')">📖 Diary</button>
+  </div>
+  <div class="status-dot" title="Online"></div>
+</div>
+
+<div class="body">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <!-- Goals -->
+    <div>
+      <div class="sec-label">My Goals</div>
+      <div id="goalList"></div>
+      <button class="addbtn" onclick="openModal('gm')">+ New Goal</button>
+    </div>
+    <!-- Diary notes -->
+    <div>
+      <div class="sec-label">Diary / Notes</div>
+      <div id="noteList"></div>
+      <button class="addbtn" onclick="openModal('nm')">+ New Note</button>
+    </div>
+    <!-- Study topics -->
+    <div>
+      <div class="sec-label">Study Topics</div>
+      <div id="studyList"></div>
+      <button class="addbtn" onclick="openModal('sm')">+ Add Topic</button>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="chat">
+
+    <!-- Daily ayah -->
+    <div class="ayah-bar">
+      <span style="color:var(--gold);font-size:13px;">✦</span>
+      <span class="ayah-text" id="ayahText">Loading...</span>
+      <span class="ayah-ref" id="ayahRef"></span>
+    </div>
+
+    <!-- Messages -->
+    <div class="msgs" id="msgs"></div>
+    <div class="typing-wrap" id="typing">
+      <div class="av" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(200,168,75,.28);display:flex;align-items:center;justify-content:center;font-size:14px;">🌙</div>
+      <div class="tdots"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- Input -->
+    <div class="inp-area">
+      <div id="apiNotice"></div>
+      <div class="qbtns">
+        <button class="qbtn" onclick="qs('Aaj ke liye ek motivational ayah ya hadith batao')">🌅 Aaj ki motivation</button>
+        <button class="qbtn" onclick="qs('Mere goals ka progress dekh ke Islamic advice do')">🎯 Goal advice</button>
+        <button class="qbtn" onclick="qs('Koi aisi dua batao jo padhai mein help kare')">📚 Study dua</button>
+        <button class="qbtn" onclick="qs('Aaj ka din kaisa guzara — diary mein likhna chahta hoon')">📖 Diary likho</button>
+        <button class="qbtn" onclick="qs('Mujhe koi interesting Islamic hadith sunao')">🕌 Hadith sunao</button>
+        <button class="qbtn" onclick="qs('Is mushkil situation mein mujhe kya karna chahiye: ')">💡 Guidance lo</button>
+      </div>
+      <div class="inp-row">
+        <textarea class="txa" id="inp" placeholder="Nayab se poochho... (Hindi / English / Urdu)"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send();}"
+          oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,110)+'px'"></textarea>
+        <button class="sbtn" onclick="send()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GOAL MODAL -->
+<div class="ov" id="gm">
+  <div class="modal">
+    <h3>🎯 Naya Goal</h3>
+    <input id="gt" placeholder="Goal ka naam (e.g. Roz Quran padhna)" />
+    <input id="gtg" placeholder="Target (e.g. 30 din, 1 para/day)" />
+    <input id="gp" type="number" min="0" max="100" placeholder="Abhi tak progress % (0–100)" />
+    <div class="mbtns">
+      <button class="bc" onclick="closeModal('gm')">Cancel</button>
+      <button class="bs" onclick="saveGoal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTE MODAL -->
+<div class="ov" id="nm">
+  <div class="modal">
+    <h3>📖 Diary / Note</h3>
+    <input id="nt" placeholder="Title (e.g. Aaj ka din)" />
+    <textarea id="nc" placeholder="Apna note likhiye..."></textarea>
+    <select id="nc2">
+      <option value="diary">📖 Diary Entry</option>
+      <option value="note">📝 General Note</option>
+      <option value="dua">🤲 Dua / Wish</option>
+      <option value="lesson">📚 Study Note</option>
+    </select>
+    <div class="mbtns">
+      <button class="bc" onclick="closeModal('nm')">Cancel</button>
+      <button class="bs" onclick="saveNote()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- STUDY MODAL -->
+<div class="ov" id="sm">
+  <div class="modal">
+    <h3>📚 Study Topic</h3>
+    <input id="stitle" placeholder="Topic naam (e.g. Fiqh, Math, History)" />
+    <textarea id="sdesc" placeholder="Notes ya questions..."></textarea>
+    <div class="mbtns">
+      <button class="bc" onclick="closeModal('sm')">Cancel</button>
+      <button class="bs" onclick="saveStudy()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- API KEY MODAL -->
+<div class="ov" id="km">
+  <div class="modal">
+    <h3>🔑 API Key Setup</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6;">
+      Nayab AI ko kaam karne ke liye ek free Anthropic API key chahiye.<br>
+      <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> par free account banao → API Keys → Create Key
+    </p>
+    <input id="keyinp" type="password" placeholder="sk-ant-api..." />
+    <div class="mbtns">
+      <button class="bc" onclick="closeModal('km')">Cancel</button>
+      <button class="bs" onclick="saveKey()">Save & Start</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── PARAMETERS (customize here) ──
+const PARAMS = {
+  name: "Nayab AI",
+  topics: ["Islamic knowledge & Quran", "Hadith knowledge", "Study & Education", "Daily diary & notes"],
+  tone: "friendly and warm",
+  language: "Hinglish (Hindi + English mix), use Urdu phrases naturally",
+  offTopic: "Search possible knowledge from what you know and give the best possible answer, then gently relate it back to Islamic or educational perspective if possible",
+  quranRef: true,
+  hadithRef: true,
+};
+
+// ── DAILY AYAH ──
+const ayahs = [
+  {t:'"Verily, with every hardship comes ease."', r:'Quran 94:6'},
+  {t:'"And whoever relies upon Allah — then He is sufficient for him."', r:'Quran 65:3'},
+  {t:'"Do not lose hope, nor be sad."', r:'Quran 3:139'},
+  {t:'"Indeed, Allah is with those who are patient."', r:'Quran 2:153'},
+  {t:'"Seek knowledge from the cradle to the grave."', r:'Hadith'},
+  {t:'"The best of people are those who benefit others."', r:'Hadith – Tabarani'},
+  {t:'"Allah does not burden a soul beyond that it can bear."', r:'Quran 2:286'},
+];
+const aw = ayahs[new Date().getDay() % ayahs.length];
+document.getElementById('ayahText').textContent = aw.t;
+document.getElementById('ayahRef').textContent = aw.r;
+
+// ── STORAGE ──
+let goals   = JSON.parse(localStorage.getItem('nayab_goals')  || '[]');
+let notes   = JSON.parse(localStorage.getItem('nayab_notes')  || '[]');
+let studies = JSON.parse(localStorage.getItem('nayab_study')  || '[]');
+let history = [];
+let apiKey  = localStorage.getItem('nayab_key') || '';
+
+// ── RENDER SIDEBAR ──
+function renderAll(){ renderGoals(); renderNotes(); renderStudy(); }
+
+function renderGoals(){
+  const el = document.getElementById('goalList');
+  el.innerHTML = goals.length ? goals.map((g,i)=>`
+    <div class="card" onclick="qs('Mere goal \\"${g.title}\\" ke liye (progress:${g.progress}%) Islamic tips aur dua do')">
+      <div class="ct">${g.title}</div>
+      <div class="cs">${g.target} · ${g.progress}%</div>
+      <div class="pbar"><div class="pfill" style="width:${g.progress}%"></div></div>
+    </div>`).join('') : '<p style="font-size:10px;color:var(--muted);padding:2px 6px">No goals yet</p>';
+}
+function renderNotes(){
+  const el = document.getElementById('noteList');
+  const icons = {diary:'📖',note:'📝',dua:'🤲',lesson:'📚'};
+  el.innerHTML = notes.length ? notes.slice(-5).reverse().map((n,i)=>`
+    <div class="card" onclick="qs('Is note ke baare mein Islamic ya educational perspective do: ${n.title}: ${n.content.substring(0,80)}')">
+      <div class="ct">${icons[n.type]||'📝'} ${n.title}</div>
+      <div class="cs">${n.content.substring(0,50)}${n.content.length>50?'...':''}</div>
+    </div>`).join('') : '<p style="font-size:10px;color:var(--muted);padding:2px 6px">No notes yet</p>';
+}
+function renderStudy(){
+  const el = document.getElementById('studyList');
+  el.innerHTML = studies.length ? studies.slice(-4).reverse().map((s,i)=>`
+    <div class="card" onclick="qs('Is topic par mujhe Islamic aur educational guidance do: ${s.title}. ${s.desc.substring(0,60)}')">
+      <div class="ct">📚 ${s.title}</div>
+      <div class="cs">${s.desc.substring(0,45)}${s.desc.length>45?'...':''}</div>
+    </div>`).join('') : '<p style="font-size:10px;color:var(--muted);padding:2px 6px">No topics yet</p>';
+}
+renderAll();
+
+// ── MODALS ──
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+  document.querySelectorAll('#'+id+' input,#'+id+' textarea').forEach(e=>e.value='');
+}
+document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+function saveGoal(){
+  const t=document.getElementById('gt').value.trim();
+  if(!t)return;
+  goals.push({title:t,target:document.getElementById('gtg').value||'Ongoing',progress:parseInt(document.getElementById('gp').value)||0});
+  localStorage.setItem('nayab_goals',JSON.stringify(goals));
+  renderGoals(); closeModal('gm');
+  qs(`Maine ek naya goal add kiya: "${t}". Iske liye mujhe Islamic motivation, practical tips aur ek dua batao.`);
+}
+function saveNote(){
+  const t=document.getElementById('nt').value.trim()||'Note';
+  const c=document.getElementById('nc').value.trim();
+  const tp=document.getElementById('nc2').value;
+  if(!c)return;
+  notes.push({title:t,content:c,type:tp,date:new Date().toLocaleDateString('en-IN')});
+  localStorage.setItem('nayab_notes',JSON.stringify(notes));
+  renderNotes(); closeModal('nm');
+  addMsg('a',`✅ Note save ho gaya: <b>${t}</b> (${tp}). Aap is se related kuch pooch sakte ho!`);
+}
+function saveStudy(){
+  const t=document.getElementById('stitle').value.trim();
+  const d=document.getElementById('sdesc').value.trim();
+  if(!t)return;
+  studies.push({title:t,desc:d});
+  localStorage.setItem('nayab_study',JSON.stringify(studies));
+  renderStudy(); closeModal('sm');
+  qs(`Is study topic par mujhe detailed Islamic aur educational guidance do: "${t}". ${d}`);
+}
+function saveKey(){
+  const k=document.getElementById('keyinp').value.trim();
+  if(!k)return;
+  apiKey=k; localStorage.setItem('nayab_key',k);
+  closeModal('km');
+  document.getElementById('apiNotice').innerHTML='';
+  addMsg('a','✅ API key save ho gayi! Ab Nayab AI fully kaam karega. Bismillah — shuru karte hain! 🌙');
+}
+
+// ── API NOTICE ──
+function showApiNotice(){
+  if(apiKey) return;
+  document.getElementById('apiNotice').innerHTML=`
+    <div class="api-notice">
+      🔑 <b>API Key zaroori hai.</b> Free key lo: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+      <input id="inlineKey" type="password" placeholder="Yahan paste karo: sk-ant-api..." onkeydown="if(event.key==='Enter'){saveInlineKey()}" />
+      <button onclick="saveInlineKey()" style="margin-top:5px;background:var(--gold);border:none;color:var(--dark);padding:4px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:'Poppins',sans-serif;">Save Key</button>
+    </div>`;
+}
+function saveInlineKey(){
+  const k=document.getElementById('inlineKey').value.trim();
+  if(!k)return;
+  apiKey=k; localStorage.setItem('nayab_key',k);
+  document.getElementById('apiNotice').innerHTML='';
+  addMsg('a','✅ Jazakallah! API key save ho gayi. Ab Nayab AI fully active hai! 🌙');
+}
+
+// ── CHAT ──
+function addMsg(role, html){
+  const wrap = document.getElementById('msgs');
+  const d = document.createElement('div');
+  d.className='msg '+(role==='a'?'a':'u');
+  d.innerHTML=`<div class="av">${role==='a'?'🌙':'👤'}</div><div class="bub">${html}</div>`;
+  wrap.appendChild(d);
+  wrap.scrollTop=99999;
+}
+
+// Welcome message
+addMsg('a',`<span class="ar">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</span>
+<span class="hl">Assalamu Alaikum! 🌙 Main hoon Nayab AI.</span><br><br>
+Main aapka personal assistant hoon — <b>Islamic knowledge</b>, <b>Quran & Hadith</b>, <b>padhai</b> aur <b>diary</b> mein aapki madad karunga.<br><br>
+Kuch bhi poochho — Hindi ya English mein. Sidebar mein apne <b>goals</b>, <b>notes</b> aur <b>study topics</b> add kar sakte ho!`);
+
+if(!apiKey) showApiNotice();
+
+async function send(){
+  const el=document.getElementById('inp');
+  const txt=el.value.trim(); if(!txt)return;
+  el.value=''; el.style.height='auto';
+
+  if(!apiKey){ showApiNotice(); addMsg('a','⚠️ Pehle API key save karo (upar dekho). Phir baat karte hain!'); return; }
+
+  addMsg('u', txt.replace(/</g,'&lt;'));
+  history.push({role:'user',content:txt});
+
+  const typing=document.getElementById('typing');
+  typing.classList.add('show');
+  document.getElementById('msgs').scrollTop=99999;
+
+  // Build context
+  const gc = goals.length ? `\nUser goals: ${goals.map(g=>`${g.title} (${g.progress}% done, target: ${g.target})`).join('; ')}` : '';
+  const nc = notes.length ? `\nRecent notes: ${notes.slice(-3).map(n=>`[${n.type}] ${n.title}: ${n.content.substring(0,80)}`).join(' | ')}` : '';
+  const sc = studies.length ? `\nStudy topics: ${studies.slice(-3).map(s=>s.title).join(', ')}` : '';
+
+  const sys = `You are ${PARAMS.name}, a warm, knowledgeable, and friendly Islamic personal AI assistant.
+
+YOUR CORE TOPICS: ${PARAMS.topics.join(', ')}
+YOUR TONE: ${PARAMS.tone}
+LANGUAGE: ${PARAMS.language}
+OFF-TOPIC BEHAVIOR: ${PARAMS.offTopic}
+
+BEHAVIOR RULES:
+- Always respond in a mix of Hindi and English (Hinglish). Use Urdu words naturally (Inshallah, Alhamdulillah, Mashallah, Jazakallah, SubhanAllah).
+- For Islamic questions: always cite Quran (Surah name + verse) or authentic Hadith (Bukhari/Muslim/etc) as reference.
+- For study questions: give clear, simple explanations + relate to Islamic value of seeking knowledge.
+- For diary/notes: be empathetic, supportive, and give Islamic reflection.
+- For off-topic questions: give the best possible answer from your knowledge, then add an Islamic or educational perspective if relevant.
+- Keep responses concise but meaningful. Use emojis occasionally for warmth (🌙 ✨ 🤲 📖 🎯).
+- Never give fatwas — only general Islamic knowledge and guidance.
+- Address the user warmly, like a knowledgeable friend.
+${gc}${nc}${sc}`;
+
+  try{
+    const r = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:sys,
+        messages:history.slice(-12)
+      })
+    });
+    const data=await r.json();
+    if(data.error){ throw new Error(data.error.message); }
+    const reply=data.content?.[0]?.text||'Kuch error hua, dobara try karo.';
+    history.push({role:'assistant',content:reply});
+    typing.classList.remove('show');
+    addMsg('a', reply.replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<b>$1</b>'));
+  } catch(e){
+    typing.classList.remove('show');
+    let msg='⚠️ Error: '+e.message;
+    if(e.message.includes('401')||e.message.includes('auth')) msg='❌ API key galat hai. Sahi key daalo.';
+    if(e.message.includes('network')||e.message.includes('fetch')) msg='❌ Internet connection check karo.';
+    addMsg('a', msg);
+  }
+}
+
+function qs(t){ document.getElementById('inp').value=t; send(); }
+
+function setTab(btn, tab){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+</script>
+</body>
+</html>
